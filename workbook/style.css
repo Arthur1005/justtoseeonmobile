@@ -44,11 +44,41 @@ main {
     overflow: hidden;
 }
 
+a {
+    color: white;
+}
+
 #canvas {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+}
+
+#canvas.gridScroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#canvas.gridScroll::-webkit-scrollbar {
+    width: 4px;
+}
+
+#canvas.gridScroll::-webkit-scrollbar-track {
+    background: transparent;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+#canvas.gridScroll::-webkit-scrollbar-thumb {
+    background: rgba(47, 248, 1, 0.3);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+#canvas.gridScroll.is-scrolling::-webkit-scrollbar-thumb {
+    background: rgba(47, 248, 1, 1);
+    transition: background 0.1s ease;
 }
 
 #projectWorkspace {
@@ -71,9 +101,7 @@ main {
     transition:
         transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         opacity 0.8s ease,
-        filter 0.8s ease,
-        top 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-        left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        filter 0.8s ease;
 }
 
 .projectCard:active {
@@ -89,35 +117,46 @@ main {
     scale: 1.05;
 }
 
+.projectCard.bouncing {
+    transition: none !important;
+    transform-origin: top left;
+    will-change: transform;
+}
+
 .projectCard:not(.dragging):hover {
     z-index: 100 !important;
 }
 
-.projectCard.inactiveCategory {
+body:has(#btn2a.catBtnActiveGreen) .dataCat2b {
     opacity: 0.05;
     filter: grayscale(100%);
     pointer-events: none;
-    z-index: 0;
+    z-index: 0 !important;
+}
+
+body:has(#btn2b.catBtnActiveGreen) .dataCat2a {
+    opacity: 0.05;
+    filter: grayscale(100%);
+    pointer-events: none;
+    z-index: 0 !important;
 }
 
 
 #projectWorkspace.gridActive {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 24px;
+    display: block !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
     width: 90vw;
     height: auto;
     max-width: 1400px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 0;
-    pointer-events: none;
+    margin: 0 auto;
+    padding: 4rem 0 10rem;
+    pointer-events: auto;
 }
 
-.gridActive .projectCard:not(.inactiveCategory) {
+#projectWorkspace.gridActive .projectCard {
     position: relative !important;
     top: auto !important;
     left: auto !important;
@@ -128,8 +167,8 @@ main {
     visibility: visible;
 }
 
-.gridActive .projectCard.inactiveCategory {
-    position: absolute !important;
+body:has(#btn2a.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2b,
+body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
     display: none !important;
 }
 
@@ -150,9 +189,9 @@ main {
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    backdrop-filter: blur(24px);
     background-color: rgba(0, 0, 0, 0.92);
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    will-change: backdrop-filter;
     visibility: hidden;
     opacity: 0;
 }
@@ -160,6 +199,7 @@ main {
 #modalOverlay.active {
     visibility: visible;
     opacity: 1;
+    backdrop-filter: blur(12px);
 }
 
 
@@ -209,6 +249,25 @@ main {
     object-fit: contain;
 }
 
+.modalMediaPane.galleryFullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.95);
+    overflow-y: auto;
+}
+
+.modalMediaPane.galleryFullscreen .modalImageSlide {
+    width: 100vw;
+    height: 100vh !important;
+}
+
+.modalMediaPane.galleryFullscreen .modalImage {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+}
+
 .modalFooterBar {
     display: flex;
     justify-content: space-between;
@@ -242,8 +301,8 @@ main {
 
 .modalArchiveTag {
     padding: 0.75rem 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(47, 248, 1, 0.3);
+    color: #2ff801;
     font-size: 10px;
     font-weight: bold;
     text-transform: uppercase;
@@ -254,7 +313,7 @@ main {
 
 .modalNotesBtn {
     position: absolute;
-    top: 1rem;
+    top: 0.6rem;
     right: 1rem;
     z-index: 1001;
     display: flex;
@@ -264,7 +323,14 @@ main {
     color: #e0e0e0;
     background: none;
     border: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, opacity 0.35s ease;
+}
+
+
+.modalNotesBtn img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
 }
 
 .modalNotesBtn:hover {
@@ -291,6 +357,7 @@ main {
 #modalNotesPanel.active {
     width: 320px;
     padding: 2rem 1.5rem;
+    overflow-y: auto;
 }
 
 .notesLabel {
@@ -339,7 +406,34 @@ main {
     font-size: 0.85rem;
     line-height: 1.7;
     padding-top: 1rem;
+    padding-right: 1rem;
+    margin-right: -1rem;
     overflow-y: auto;
+}
+
+#modalDescription::-webkit-scrollbar,
+.modalMediaPane::-webkit-scrollbar {
+    width: 4px;
+}
+
+#modalDescription::-webkit-scrollbar-track,
+.modalMediaPane::-webkit-scrollbar-track {
+    background: transparent;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+#modalDescription::-webkit-scrollbar-thumb,
+.modalMediaPane::-webkit-scrollbar-thumb {
+    background: rgba(47, 248, 1, 0.3);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+}
+
+#modalDescription.is-scrolling::-webkit-scrollbar-thumb,
+.modalMediaPane.is-scrolling::-webkit-scrollbar-thumb {
+    background: rgba(47, 248, 1, 1);
+    transition: background 0.1s ease;
 }
 
 
@@ -348,7 +442,7 @@ main {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 50;
+    z-index: 200;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -376,9 +470,10 @@ main {
     font-weight: normal;
     letter-spacing: 0.2em;
     color: #adaaaa;
-    background: none;
-    border: none;
-    padding-bottom: 0.25rem;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    padding: 0.4rem 0.85rem;
     cursor: pointer;
     transition: all 0.15s ease;
 }
@@ -400,6 +495,7 @@ main {
 }
 
 #btn2a.catBtnInactive:hover { color: #2ff801; }
+#btn2b.catBtnInactive:hover { color: #2ff801; }
 
 
 .seqControls {
@@ -415,17 +511,18 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 0.6rem;
     color: #e0e0e0;
-    background: none;
-    border: none;
-    border-radius: 0.5rem;
+    background: rgba(30, 30, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .controlBtn:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .controlIcon {
@@ -470,12 +567,43 @@ canvas {
 
 
 a {
-    color: #2ff801;
+    color: #e0e0e0;
     text-decoration: none;
     max-width: fit-content;
     padding: 2px;
 }
 
+a span {
+    color: #2ff801;
+}
+
 a span:hover {
-    font-weight: bolder;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.keyword {
+    font-weight: 700;
+}
+
+.categorySection {
+    margin-bottom: 3rem;
+}
+
+.categorySectionTitle {
+    font-family: 'Terminal';
+    font-size: 0.6rem;
+    font-weight: bold;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #2ff801;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(47, 248, 1, 0.2);
+}
+
+.categorySectionCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
 }

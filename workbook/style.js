@@ -7,13 +7,11 @@ const notesToggleBtn  = document.getElementById('notesToggleBtn');
 const modalCategory = document.getElementById('modalCategory');
 const modalDescription = document.getElementById('modalDescription');
 const btnResize = document.getElementById('btnResize');
-const btnRotation = document.getElementById('btnRotation');
 const btnGrid = document.getElementById('btnGrid');
 const btnChaos = document.getElementById('btnChaos');
 const btn2A = document.getElementById('btn2a');
 const btn2B = document.getElementById('btn2b');
 
-let currentCategory = null;
 let step = 0;
 let placeholder = document.createElement('div');
 placeholder.className = 'dropPlaceholder';
@@ -27,112 +25,139 @@ function getAllCards() {
     return Array.from(document.querySelectorAll('.projectCard'));
 }
 
-function getVisibleCards() {
-    return getAllCards().filter(card => !card.classList.contains('inactiveCategory'));
-}
+let bouncers = [];
 
-function updateVisibility() {
-    const allCards = getAllCards();
-    allCards.forEach(card => {
-        const isMatch = currentCategory === null ||
-                        (currentCategory === '2A' && card.classList.contains('dataCat2a')) ||
-                        (currentCategory === '2B' && card.classList.contains('dataCat2b'));
-
-        if (step < 3) card.style.display = 'block';
-
-        if (isMatch) {
-            card.classList.remove('inactiveCategory');
-            card.style.zIndex = "10";
-        } else {
-            card.classList.add('inactiveCategory');
-            card.style.zIndex = "0";
-        }
-
-        
+function startBounce() {
+    stopBounce();
+    loop();
+    bouncers = getAllCards().map(card => {
+        const s = 0.6 + Math.random() * 0.6;
+        return {
+            el: card,
+            x: Math.random() * (window.innerWidth - 320 * s),
+            y: Math.random() * (window.innerHeight - 180 * s),
+            vx: (0.2 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1),
+            vy: (0.2 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1),
+            scale: s,
+            scaleDir: Math.random() < 0.5 ? 1 : -1,
+            scaleSpeed: 0.001 + Math.random() * 0.002
+        };
     });
-
-    if (step === 3) {
-        applyGridLayout();
-    }
+    bouncers.forEach(b => {
+        b.el.style.position = 'absolute';
+        b.el.style.left = '0';
+        b.el.style.top = '0';
+        b.el.style.width = '320px';
+        b.el.classList.add('bouncing');
+    });
 }
 
+function stopBounce() {
+    bouncers.forEach(b => {
+        b.el.classList.remove('bouncing');
+        b.el.style.left = b.x + 'px';
+        b.el.style.top = b.y + 'px';
+        b.el.style.transform = 'scale(1)';
+    });
+    bouncers = [];
+    noLoop();
+}
+
+// Category Filtering – getVisibleCards for Workbook B
+function getVisibleCards() {
+    const isAActive = btn2A.classList.contains('catBtnActiveGreen');
+    const isBActive = btn2B.classList.contains('catBtnActiveGreen');
+    return getAllCards().filter(card => {
+        if (isAActive && card.classList.contains('dataCat2b')) return false;
+        if (isBActive && card.classList.contains('dataCat2a')) return false;
+        return true;
+    });
+}
+
+
+// Random Layout – Bounce Animation for Workbook B
 function randomizeLayout() {
     step = 0;
+    removeCategorySections();
     workspace.classList.remove('gridActive');
-    const allCards = getAllCards();
-
-    allCards.forEach((card) => {
-        card.style.display = 'block';
-        const randomTop = 10 + Math.random() * 65;
-        const randomLeft = 10 + Math.random() * 70;
-        const randomRotation = Math.floor(Math.random() * 80) - 40;
-        const randomScale = 0.5 + Math.random() * 0.4;
-
-        card.style.position = 'absolute';
-        card.style.top = `${randomTop}%`;
-        card.style.left = `${randomLeft}%`;
-        card.style.transform = `rotate(${randomRotation}deg) scale(${randomScale})`;
-        card.style.width = '320px';
-    });
-
+    startBounce();
     btnResize.className = "controlBtn btnActiveGlow";
-    btnRotation.className = "controlBtn btnDisabled";
     btnGrid.className = "controlBtn btnDisabled";
 }
 
 function handleResize() {
+    if (step === 1) { randomizeLayout(); return; }
     if (step !== 0) return;
     step = 1;
-    const allCards = getAllCards();
-    allCards.forEach(card => {
-        const currentTransform = card.style.transform;
-        const rotateMatch = currentTransform.match(/rotate\([^)]+\)/);
-        card.style.transform = rotateMatch ? `${rotateMatch[0]} scale(1)` : 'scale(1)';
-    });
+    bouncers.forEach(b => { b.scale = 1; b.scaleSpeed = 0; });
     btnResize.className = "controlBtn btnMuted";
-    btnRotation.className = "controlBtn btnActiveGlow";
-}
-
-function handleRotation() {
-    if (step !== 1) return;
-    step = 2;
-    const allCards = getAllCards();
-    allCards.forEach(card => {
-        card.style.transform = 'rotate(0deg) scale(1)';
-    });
-    btnRotation.className = "controlBtn btnMuted";
     btnGrid.className = "controlBtn btnActiveGlow";
 }
 
 function handleGrid() {
-    if (step !== 2) return;
-    step = 3;
+    if (step === 2) {
+        removeCategorySections();
+        workspace.classList.remove('gridActive');
+        startBounce();
+        bouncers.forEach(b => { b.scale = 1; b.scaleSpeed = 0; });
+        step = 1;
+        btnResize.className = "controlBtn btnMuted";
+        btnGrid.className = "controlBtn btnActiveGlow";
+        return;
+    }
+    if (step !== 1) return;
+    step = 2;
+    stopBounce();
     applyGridLayout();
     btnGrid.className = "controlBtn btnGridDone";
 }
 
-function applyGridLayout() {
-    workspace.classList.add('gridActive');
-    const allCards = getAllCards();
-    allCards.forEach(card => {
-        const isMatch = currentCategory === null ||
-                        (currentCategory === '2A' && card.classList.contains('dataCat2a')) ||
-                        (currentCategory === '2B' && card.classList.contains('dataCat2b'));
+function extractSubCategory(cat) {
+    const dashIdx = cat.lastIndexOf('–');
+    if (dashIdx >= 0) return cat.slice(dashIdx + 1).trim();
+    const hyphenIdx = cat.lastIndexOf('-');
+    if (hyphenIdx >= 0) return cat.slice(hyphenIdx + 1).trim();
+    return cat;
+}
 
-        if (isMatch) {
-            card.style.display = 'block';
-            card.style.position = 'relative';
-            card.style.top = 'auto';
-            card.style.left = 'auto';
-            card.style.transform = 'none';
-            card.style.width = '100%';
-            card.classList.remove('inactiveCategory');
-        } else {
-            card.style.display = 'none';
-            card.style.position = 'absolute';
-            card.classList.add('inactiveCategory');
-        }
+function buildCategorySections() {
+    const visibleCards = getVisibleCards();
+    const groups = new Map();
+    const categoryOrder = [];
+    visibleCards.forEach(card => {
+        const cat = card.dataset.category || 'Other';
+        if (!groups.has(cat)) { groups.set(cat, []); categoryOrder.push(cat); }
+        groups.get(cat).push(card);
     });
+    categoryOrder.forEach(cat => {
+        const section = document.createElement('div');
+        section.className = 'categorySection';
+        const title = document.createElement('div');
+        title.className = 'categorySectionTitle';
+        title.textContent = extractSubCategory(cat);
+        section.appendChild(title);
+        const cardsContainer = document.createElement('div');
+        cardsContainer.className = 'categorySectionCards';
+        groups.get(cat).forEach(card => cardsContainer.appendChild(card));
+        section.appendChild(cardsContainer);
+        workspace.appendChild(section);
+    });
+}
+
+function removeCategorySections() {
+    workspace.querySelectorAll('.categorySection').forEach(section => {
+        section.querySelectorAll('.projectCard').forEach(card => workspace.appendChild(card));
+        section.remove();
+    });
+    document.getElementById('canvas').classList.remove('gridScroll');
+}
+
+// Grid Layout – Category Rows with Scrollable Canvas
+function applyGridLayout() {
+    removeCategorySections();
+    workspace.classList.add('gridActive');
+    document.getElementById('canvas').classList.add('gridScroll');
+    buildCategorySections();
 }
 
 
@@ -140,7 +165,7 @@ function openModal(card) {
     const galleryEls = Array.from(card.querySelectorAll('.cardGallery img, .cardGallery video'));
     const slides = galleryEls.length > 0
         ? galleryEls.map(el => el.tagName === 'VIDEO'
-            ? `<div class="modalImageSlide"><video class="modalImage" src="${el.src}" autoplay loop muted></video></div>`
+            ? `<div class="modalImageSlide"><video class="modalImage" src="${el.src}" autoplay loop ${card.dataset.sound ? '' : 'muted'}></video></div>`
             : `<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${el.src}"/></div>`)
         : [`<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${card.dataset.img}"/></div>`];
     modalGallery.innerHTML = slides.join('');
@@ -150,9 +175,6 @@ function openModal(card) {
     modalDescription.innerHTML = descEl ? descEl.innerHTML : '';
     modal.classList.add('active');
 
-    modalGallery.addEventListener('mouseenter', () => { isOverImg = true; });
-    modalGallery.addEventListener('mouseleave', () => { isOverImg = false; });
-
     requestAnimationFrame(() => {
         const paneHeight = document.querySelector('.modalMediaPane').clientHeight;
         modalGallery.querySelectorAll('.modalImageSlide').forEach(slide => {
@@ -161,10 +183,13 @@ function openModal(card) {
     });
 }
 
+// Click to Enlarge – Fullscreen Cleanup on Close for Workbook B
 function closeModal() {
+    document.querySelector('.modalMediaPane').classList.remove('galleryFullscreen');
     modal.classList.remove('active');
     modalNotesPanel.classList.remove('active');
     isOverImg = false;
+    isOverSingleImg = false;
 
     notesToggleBtn.classList.remove('active');
     setTimeout(() => {
@@ -173,6 +198,31 @@ function closeModal() {
 }
 
 modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+document.querySelector('.modalContainer').addEventListener('click', (e) => {
+    if (!modalNotesPanel.classList.contains('active')) return;
+    if (!modalNotesPanel.contains(e.target) && !notesToggleBtn.contains(e.target)) {
+        modalNotesPanel.classList.remove('active');
+        notesToggleBtn.classList.remove('active');
+    }
+});
+
+// Scroll Down Cursor – Single Image Exclusion for Workbook B
+modalGallery.addEventListener('mouseenter', () => {
+    const count = modalGallery.querySelectorAll('.modalImageSlide').length;
+    if (count > 1) isOverImg = true;
+    else isOverSingleImg = true;
+});
+modalGallery.addEventListener('mouseleave', () => { isOverImg = false; isOverSingleImg = false; });
+
+// Click to Enlarge – Fullscreen Gallery for Workbook B
+const modalMediaPane = document.querySelector('.modalMediaPane');
+modalGallery.addEventListener('click', (e) => {
+    const slide = e.target.closest('.modalImageSlide');
+    if (!slide) return;
+    const isFullscreen = modalMediaPane.classList.toggle('galleryFullscreen');
+    if (isFullscreen) slide.scrollIntoView({ behavior: 'instant' });
+});
 
 
 let draggedElement = null;
@@ -183,8 +233,13 @@ let offset = { x: 0, y: 0 };
 const THRESHOLD = 8;
 
 workspace.addEventListener('mousedown', (e) => {
+    // Category Filtering – Block Drag on Inactive Cards for Workbook B
     const card = e.target.closest('.projectCard');
-    if (!card || card.classList.contains('inactiveCategory')) return;
+    if (!card) return;
+    const isAActive = btn2A.classList.contains('catBtnActiveGreen');
+    const isBActive = btn2B.classList.contains('catBtnActiveGreen');
+    if (isAActive && card.classList.contains('dataCat2b')) return;
+    if (isBActive && card.classList.contains('dataCat2a')) return;
 
     draggedElement = card;
     startX = e.clientX;
@@ -199,7 +254,10 @@ document.addEventListener('mousemove', (e) => {
     cursorX = e.clientX;
     cursorY = e.clientY;
 
+    if (bouncers.length === 0) redraw();
+
     if (!draggedElement) return;
+    if (bouncers.length > 0) return;
 
     const dist = Math.sqrt(Math.pow(e.clientX - startX, 2) + Math.pow(e.clientY - startY, 2));
 
@@ -207,7 +265,7 @@ document.addEventListener('mousemove', (e) => {
         isDragging = true;
         draggedElement.classList.add('dragging');
 
-        if (step === 3) {
+        if (step === 2) {
             draggedElement.after(placeholder);
             draggedElement.style.position = 'fixed';
             draggedElement.style.width = `${placeholder.offsetWidth}px`;
@@ -217,7 +275,7 @@ document.addEventListener('mousemove', (e) => {
     }
 
     if (isDragging) {
-        if (step < 3) {
+        if (step < 2) {
             const wsRect = workspace.getBoundingClientRect();
             const leftPercent = ((e.clientX - offset.x - wsRect.left) / wsRect.width) * 100;
             const topPercent = ((e.clientY - offset.y - wsRect.top) / wsRect.height) * 100;
@@ -255,17 +313,11 @@ document.addEventListener('mousemove', (e) => {
 document.addEventListener('mouseup', () => {
     if (!draggedElement) return;
 
-    // disable for now, I'll turn it back on when workbook B is relavent :)
-    if (!isDragging && !draggedElement.classList.contains('dataCat2b')) {
+    if (!isDragging) {
         openModal(draggedElement);
     } else {
-        if (step === 3) {
+        if (step === 2) {
             placeholder.replaceWith(draggedElement);
-            draggedElement.style.position = 'relative';
-            draggedElement.style.width = '100%';
-            draggedElement.style.left = 'auto';
-            draggedElement.style.top = 'auto';
-            draggedElement.style.zIndex = "10";
         }
     }
 
@@ -276,19 +328,23 @@ document.addEventListener('mouseup', () => {
 });
 
 
-function openCategory(event, category) {
-    currentCategory = category;
-    document.querySelectorAll('.catBtn').forEach(btn => {
-        btn.classList.remove('catBtnActiveGreen');
-        btn.classList.add('catBtnInactive');
+// Category Filtering – Button Toggle, CSS :has() Does the Rest for Workbook B
+function openCategory(event) {
+    const btn = event.currentTarget;
+    const wasActive = btn.classList.contains('catBtnActiveGreen');
+    document.querySelectorAll('.catBtn').forEach(b => {
+        b.classList.remove('catBtnActiveGreen');
+        b.classList.add('catBtnInactive');
     });
-    event.currentTarget.classList.remove('catBtnInactive');
-    event.currentTarget.classList.add('catBtnActiveGreen');
-    updateVisibility();
+    if (!wasActive) {
+        btn.classList.remove('catBtnInactive');
+        btn.classList.add('catBtnActiveGreen');
+    }
+    if (step === 2) applyGridLayout();
 }
 
-btn2A.addEventListener('click', (e) => openCategory(e, '2A'));
-btn2B.addEventListener('click', (e) => openCategory(e, '2B'));
+btn2A.addEventListener('click', openCategory);
+btn2B.addEventListener('click', openCategory);
 
 
 notesToggleBtn.onclick = () => {
@@ -302,32 +358,40 @@ notesToggleBtn.onclick = () => {
 };
 
 btnResize.addEventListener('click', handleResize);
-btnRotation.addEventListener('click', handleRotation);
 btnGrid.addEventListener('click', handleGrid);
-btnChaos.addEventListener('click', () => { randomizeLayout(); updateVisibility(); });
+btnChaos.addEventListener('click', () => {
+    if (bouncers.length > 0) {
+        stopBounce();
+        step = 1;
+        btnResize.className = "controlBtn btnMuted";
+        btnGrid.className = "controlBtn btnActiveGlow";
+    } else {
+        randomizeLayout();
+    }
+});
 
-let isOverB = false;
 let isOverImg = false;
+let isOverSingleImg = false;
+let hoveredCardTitle = '';
+
+function attachScrollbarVisibility(el) {
+    let timer;
+    el.addEventListener('scroll', () => {
+        el.classList.add('is-scrolling');
+        clearTimeout(timer);
+        timer = setTimeout(() => el.classList.remove('is-scrolling'), 800);
+    });
+}
+attachScrollbarVisibility(modalMediaPane);
+attachScrollbarVisibility(modalDescription);
 
 window.addEventListener('load', () => {
     randomizeLayout();
+    attachScrollbarVisibility(document.getElementById('canvas'));
 
-    document.querySelectorAll('.projectCard').forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            if (!card.classList.contains('inactiveCategory')) {
-                card.style.zIndex = '100';
-            }
-        });
-        card.addEventListener('mouseleave', () => {
-            if (!card.classList.contains('inactiveCategory')) {
-                card.style.zIndex = '10';
-            }
-        });
-    });
-
-    document.querySelectorAll('.dataCat2b').forEach(card => {
-        card.addEventListener('mouseenter', () => { isOverB = true; });
-        card.addEventListener('mouseleave', () => { isOverB = false; });
+    getAllCards().forEach(card => {
+        card.addEventListener('mouseenter', () => { hoveredCardTitle = card.dataset.title ?? ''; });
+        card.addEventListener('mouseleave', () => { hoveredCardTitle = ''; });
     });
 
     document.querySelectorAll('.cardGallery').forEach(img => {
@@ -345,6 +409,7 @@ window.addEventListener('load', () => {
 
 
 // p5
+let greenColor;
 function setup() {
    let canvas = createCanvas(windowWidth, windowHeight);
    canvas.style("position", "fixed");
@@ -352,47 +417,123 @@ function setup() {
    canvas.style("left", "0");
    canvas.style("z-index", "1000");
    canvas.style("pointer-events", "none");
+   greenColor = color('#2ff801');
+   noLoop();
 }
 
-function draw() {  
-  fill('#2ff801');
-  noStroke();
+function mouseMoved() {
+   if (bouncers.length === 0) redraw();
+}
+
+function draw() {
   clear();
-  circle(pmouseX, pmouseY, 10);
+  fill(greenColor);
+  noStroke();
+  circle(cursorX, cursorY, 10);
 
-  if (isOverB) {
-        noAccess();
+  bouncers.forEach(b => {
+    b.x += b.vx;
+    b.y += b.vy;
+
+    const cardW = 320 * b.scale;
+    const cardH = 180 * b.scale;
+
+    if (b.x < 0)            { b.x = 0;              b.vx =  Math.abs(b.vx); }
+    if (b.y < 0)            { b.y = 0;              b.vy =  Math.abs(b.vy); }
+    if (b.x + cardW > width) { b.x = width - cardW;  b.vx = -Math.abs(b.vx); }
+    if (b.y + cardH > height){ b.y = height - cardH; b.vy = -Math.abs(b.vy); }
+
+    b.scale += b.scaleDir * b.scaleSpeed;
+    if (b.scale > 1.4 || b.scale < 0.4) b.scaleDir *= -1;
+    b.scale = Math.max(0.4, Math.min(1.4, b.scale));
+
+    b.el.style.transform = `translate3d(${b.x}px, ${b.y}px, 0) scale(${b.scale})`;
+  });
+
+  if (hoveredCardTitle && !modal.classList.contains('active')) {
+        showCardTitle();
   }
 
-  if (isOverImg && modal.classList.contains('active')) {
-    scrollDown();
+  if (modal.classList.contains('active')) {
+    if (modalMediaPane.classList.contains('galleryFullscreen')) {
+      if (isOverImg) {
+        scrollDownExit();
+      } else {
+        clickToExit();
+      }
+    } else if (isOverImg) {
+      scrollDown();
+    } else if (isOverSingleImg) {
+      clickEnlarge();
+    }
   }
 }
 
-function noAccess() {
+function showCardTitle() {
+    textSize(16);
+    const w = textWidth(hoveredCardTitle) + 24;
+    rectMode(CENTER);
+    fill(30, 30, 30, 230);
+    stroke(255, 255, 255, 51);
+    strokeWeight(1);
+    rect(cursorX - 2, cursorY - 2, w, 40);
+    noStroke();
+    fill(greenColor);
+    textAlign(CENTER, CENTER);
+    text(hoveredCardTitle, cursorX, cursorY);
+}
+
+function scrollDownExit() {
     textSize(16);
     rectMode(CENTER);
-
-    fill(255, 255, 255);
+    fill(30, 30, 30, 230);
+    stroke(255, 255, 255, 51);
+    strokeWeight(1);
+    rect(cursorX - 2, cursorY - 2, 340, 40);
     noStroke();
-    rect(mouseX - 2, mouseY - 2, 200, 40);
-
-    fill('#2ff801');
+    fill(greenColor);
     textAlign(CENTER, CENTER);
-    text('No Access Now', mouseX, mouseY);
+    text('Scroll Down & Click Again to Exit', cursorX, cursorY);
 }
 
+function clickToExit() {
+    textSize(16);
+    rectMode(CENTER);
+    fill(30, 30, 30, 230);
+    stroke(255, 255, 255, 51);
+    strokeWeight(1);
+    rect(cursorX - 2, cursorY - 2, 210, 40);
+    noStroke();
+    fill(greenColor);
+    textAlign(CENTER, CENTER);
+    text('Click Again to Exit', cursorX, cursorY);
+}
+
+function clickEnlarge() {
+    textSize(16);
+    rectMode(CENTER);
+    fill(30, 30, 30, 230);
+    stroke(255, 255, 255, 51);
+    strokeWeight(1);
+    rect(cursorX - 2, cursorY - 2, 180, 40);
+    noStroke();
+    fill(greenColor);
+    textAlign(CENTER, CENTER);
+    text('Click to Enlarge', cursorX, cursorY);
+}
+
+// Scroll Down Cursor – Label Update for Workbook B
 function scrollDown() {
     textSize(16);
     rectMode(CENTER);
-
-    fill(0, 0, 0);
+    fill(30, 30, 30, 230);
+    stroke(255, 255, 255, 51);
+    strokeWeight(1);
+    rect(cursorX - 2, cursorY - 2, 280, 40);
     noStroke();
-    rect(mouseX - 2, mouseY - 2, 200, 40);
-
-    fill('#2ff801');
+    fill(greenColor);
     textAlign(CENTER, CENTER);
-    text('Scroll Down', mouseX, mouseY);
+    text('Scroll Down & Click to Enlarge', cursorX, cursorY);
 }
 
 
@@ -404,3 +545,5 @@ function scrollDown() {
 // I acknowledge the use of Claude to fetch code from my other project; answer questions when I asked; indentify bug in code; change large amount of code at once (e.g. path of images).
 // I prompted the model to ask me clarifying questions about my draft and the flow of my logic. I used the output to refine my central thesis statement and to decide how to order the argument for my essay.
 // A full record of prompts and outputs is available upon request.
+
+
