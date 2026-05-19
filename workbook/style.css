@@ -191,7 +191,6 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
     padding: 2rem;
     background-color: rgba(0, 0, 0, 0.92);
     transition: opacity 0.3s ease, visibility 0.3s ease;
-    will-change: backdrop-filter;
     visibility: hidden;
     opacity: 0;
 }
@@ -199,7 +198,6 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
 #modalOverlay.active {
     visibility: visible;
     opacity: 1;
-    backdrop-filter: blur(12px);
 }
 
 
