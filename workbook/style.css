@@ -606,15 +606,15 @@ a span:hover {
 }
 
 .workbookMasterTitle {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 700;
-    letter-spacing: -0.04em;
+    font-family: 'Terminal';
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: #e0e0e0;
+    color: #2ff801;
     width: 100%;
     padding: 3rem 0 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(47, 248, 1, 0.2);
     margin-bottom: 2.5rem;
 }
 
