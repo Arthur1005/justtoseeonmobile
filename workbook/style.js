@@ -12,6 +12,8 @@ const btnChaos = document.getElementById('btnChaos');
 const btn2A = document.getElementById('btn2a');
 const btn2B = document.getElementById('btn2b');
 
+const isMobile = window.innerWidth < window.innerHeight;
+
 let step = 0;
 let placeholder = document.createElement('div');
 placeholder.className = 'dropPlaceholder';
@@ -29,7 +31,6 @@ let bouncers = [];
 
 function startBounce() {
     stopBounce();
-    loop();
     bouncers = getAllCards().map(card => {
         const s = 0.6 + Math.random() * 0.6;
         return {
@@ -43,21 +44,28 @@ function startBounce() {
             scaleSpeed: 0.001 + Math.random() * 0.002
         };
     });
-    bouncers.forEach(b => {
-        b.el.style.position = 'absolute';
-        b.el.style.left = '0';
-        b.el.style.top = '0';
-        b.el.style.width = '320px';
-        b.el.classList.add('bouncing');
-    });
+    if (!isMobile) {
+        loop();
+        bouncers.forEach(b => {
+            b.el.style.position = 'absolute';
+            b.el.style.left = '0';
+            b.el.style.top = '0';
+            b.el.style.width = '320px';
+            b.el.classList.add('bouncing');
+        });
+    } else {
+        bouncers.forEach(b => b.el.classList.add('bouncing'));
+    }
 }
 
 function stopBounce() {
     bouncers.forEach(b => {
         b.el.classList.remove('bouncing');
-        b.el.style.left = b.x + 'px';
-        b.el.style.top = b.y + 'px';
-        b.el.style.transform = 'scale(1)';
+        if (!isMobile) {
+            b.el.style.left = b.x + 'px';
+            b.el.style.top = b.y + 'px';
+            b.el.style.transform = 'scale(1)';
+        }
     });
     bouncers = [];
     noLoop();
@@ -218,6 +226,7 @@ modalGallery.addEventListener('mouseleave', () => { isOverImg = false; isOverSin
 // Click to Enlarge – Fullscreen Gallery for Workbook B
 const modalMediaPane = document.querySelector('.modalMediaPane');
 modalGallery.addEventListener('click', (e) => {
+    if (isMobile) return;
     const slide = e.target.closest('.modalImageSlide');
     if (!slide) return;
     const isFullscreen = modalMediaPane.classList.toggle('galleryFullscreen');
@@ -357,6 +366,7 @@ notesToggleBtn.onclick = () => {
     }
 };
 
+document.getElementById('modalBackBtn').addEventListener('click', closeModal);
 btnResize.addEventListener('click', handleResize);
 btnGrid.addEventListener('click', handleGrid);
 btnChaos.addEventListener('click', () => {
@@ -382,7 +392,7 @@ function attachScrollbarVisibility(el) {
         timer = setTimeout(() => el.classList.remove('is-scrolling'), 800);
     });
 }
-attachScrollbarVisibility(modalMediaPane);
+attachScrollbarVisibility(modalGallery);
 attachScrollbarVisibility(modalDescription);
 
 window.addEventListener('load', () => {
@@ -431,24 +441,26 @@ function draw() {
   noStroke();
   circle(cursorX, cursorY, 10);
 
-  bouncers.forEach(b => {
-    b.x += b.vx;
-    b.y += b.vy;
+  if (!modal.classList.contains('active')) {
+    bouncers.forEach(b => {
+      b.x += b.vx;
+      b.y += b.vy;
 
-    const cardW = 320 * b.scale;
-    const cardH = 180 * b.scale;
+      const cardW = 320 * b.scale;
+      const cardH = 180 * b.scale;
 
-    if (b.x < 0)            { b.x = 0;              b.vx =  Math.abs(b.vx); }
-    if (b.y < 0)            { b.y = 0;              b.vy =  Math.abs(b.vy); }
-    if (b.x + cardW > width) { b.x = width - cardW;  b.vx = -Math.abs(b.vx); }
-    if (b.y + cardH > height){ b.y = height - cardH; b.vy = -Math.abs(b.vy); }
+      if (b.x < 0)            { b.x = 0;              b.vx =  Math.abs(b.vx); }
+      if (b.y < 0)            { b.y = 0;              b.vy =  Math.abs(b.vy); }
+      if (b.x + cardW > width) { b.x = width - cardW;  b.vx = -Math.abs(b.vx); }
+      if (b.y + cardH > height){ b.y = height - cardH; b.vy = -Math.abs(b.vy); }
 
-    b.scale += b.scaleDir * b.scaleSpeed;
-    if (b.scale > 1.4 || b.scale < 0.4) b.scaleDir *= -1;
-    b.scale = Math.max(0.4, Math.min(1.4, b.scale));
+      b.scale += b.scaleDir * b.scaleSpeed;
+      if (b.scale > 1.4 || b.scale < 0.4) b.scaleDir *= -1;
+      b.scale = Math.max(0.4, Math.min(1.4, b.scale));
 
-    b.el.style.transform = `translate3d(${b.x}px, ${b.y}px, 0) scale(${b.scale})`;
-  });
+      b.el.style.transform = `translate3d(${b.x}px, ${b.y}px, 0) scale(${b.scale})`;
+    });
+  }
 
   if (hoveredCardTitle && !modal.classList.contains('active')) {
         showCardTitle();

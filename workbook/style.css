@@ -228,12 +228,18 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
 .modalMediaPane {
     flex: 1;
     background-color: #050505;
-    overflow-y: auto;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: row;
 }
 
 #modalGallery {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 .modalImageSlide {
@@ -342,17 +348,32 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
     color: #2ff801;
 }
 
+#modalBackBtn {
+    display: none;
+    position: absolute;
+    top: 0.6rem;
+    left: 1rem;
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    color: #e0e0e0;
+    background: none;
+    border: none;
+    transition: color 0.2s ease;
+}
+
 #modalNotesPanel {
+    flex-shrink: 0;
     width: 0;
     overflow: hidden;
     background-color: #111;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    z-index: 10;
     transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 
 #modalNotesPanel.active {
     width: 320px;
@@ -412,26 +433,26 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
 }
 
 #modalDescription::-webkit-scrollbar,
-.modalMediaPane::-webkit-scrollbar {
+#modalGallery::-webkit-scrollbar {
     width: 4px;
 }
 
 #modalDescription::-webkit-scrollbar-track,
-.modalMediaPane::-webkit-scrollbar-track {
+#modalGallery::-webkit-scrollbar-track {
     background: transparent;
     margin-top: 24px;
     margin-bottom: 24px;
 }
 
 #modalDescription::-webkit-scrollbar-thumb,
-.modalMediaPane::-webkit-scrollbar-thumb {
+#modalGallery::-webkit-scrollbar-thumb {
     background: rgba(47, 248, 1, 0.3);
     border-radius: 2px;
     transition: background 0.3s ease;
 }
 
 #modalDescription.is-scrolling::-webkit-scrollbar-thumb,
-.modalMediaPane.is-scrolling::-webkit-scrollbar-thumb {
+#modalGallery.is-scrolling::-webkit-scrollbar-thumb {
     background: rgba(47, 248, 1, 1);
     transition: background 0.1s ease;
 }
@@ -606,4 +627,183 @@ a span:hover {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
+}
+
+
+/* ── Mobile ── */
+@media (pointer: coarse), (max-width: 768px) {
+
+    *, *::before, *::after {
+        cursor: auto !important;
+    }
+
+    canvas {
+        display: none !important;
+    }
+
+    .controlsFooter {
+        padding: 1rem 1.25rem;
+    }
+
+    .seqControls {
+        gap: 0.35rem;
+    }
+
+    .controlIcon {
+        font-size: 22px;
+    }
+
+    .catBtn {
+        font-size: 0.6rem;
+        padding: 0.35rem 0.7rem;
+    }
+
+    main {
+        overflow: visible !important;
+    }
+
+    #canvas {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #canvas::-webkit-scrollbar {
+        height: 4px;
+        width: 0;
+    }
+
+    /* non-grid bounce mode: lay cards out in a flat horizontal strip */
+    #projectWorkspace:not(.gridActive) {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: max-content;
+        height: 100%;
+        margin: 0;
+        padding: 1.5rem;
+        gap: 1rem;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+    }
+
+    #projectWorkspace:not(.gridActive) .projectCard {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 200px;
+        flex-shrink: 0;
+    }
+
+    /* grid mode */
+    #projectWorkspace.gridActive {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start;
+        width: max-content !important;
+        max-width: none !important;
+        margin: 0 !important;
+        height: 100%;
+        padding: 1.5rem 1.5rem 5rem;
+        gap: 2rem;
+    }
+
+    .categorySection {
+        flex-shrink: 0;
+        width: 160px;
+        margin-bottom: 0;
+    }
+
+    .categorySectionCards {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+
+    #modalOverlay {
+        padding: 0;
+    }
+
+    .modalContainer {
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    .modalLeft {
+        min-height: 0;
+    }
+
+    .modalFooterBar {
+        padding: 1rem 1.25rem;
+    }
+
+    #modalTitle {
+        font-size: 1.3rem;
+    }
+
+    #modalBackBtn {
+        display: flex;
+    }
+
+    .modalContainer:has(#modalNotesPanel.active) #modalBackBtn {
+        display: none;
+    }
+
+    .modalMediaPane.galleryFullscreen {
+        position: relative !important;
+        inset: auto !important;
+        z-index: auto !important;
+        background: transparent !important;
+    }
+
+    .modalMediaPane.galleryFullscreen .modalImageSlide {
+        width: auto !important;
+        height: auto !important;
+    }
+
+    #modalNotesPanel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: auto;
+        width: auto;
+        height: 0;
+        flex-shrink: 0;
+        transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #modalNotesPanel.active {
+        width: auto;
+        height: 100%;
+    }
+
+    #modalDescription {
+        min-height: 0;
+    }
+}
+
+/* ── Force landscape in portrait ── */
+@media (pointer: coarse) and (max-width: 768px) and (orientation: portrait) {
+    body {
+        position: fixed;
+        overflow: hidden;
+        width: 100vh;
+        height: 100vw;
+        left: calc(50vw - 50vh);
+        top: calc(50vh - 50vw);
+        transform: rotate(-90deg);
+    }
+
+    main {
+        width: 100vh !important;
+        height: 100vw !important;
+    }
 }
