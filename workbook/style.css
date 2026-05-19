@@ -660,68 +660,7 @@ a span:hover {
     }
 
     main {
-        overflow: visible !important;
         height: 100dvh;
-    }
-
-    #canvas {
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    #canvas::-webkit-scrollbar {
-        height: 4px;
-        width: 0;
-    }
-
-    /* non-grid bounce mode: lay cards out in a flat horizontal strip */
-    #projectWorkspace:not(.gridActive) {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        width: max-content;
-        height: 100%;
-        margin: 0;
-        padding: 1.5rem;
-        gap: 1rem;
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-    }
-
-    #projectWorkspace:not(.gridActive) .projectCard {
-        position: relative;
-        top: auto;
-        left: auto;
-        transform: none;
-        width: 200px;
-        flex-shrink: 0;
-    }
-
-    /* grid mode */
-    #projectWorkspace.gridActive {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: flex-start;
-        width: max-content !important;
-        max-width: none !important;
-        margin: 0 !important;
-        height: 100%;
-        padding: 1.5rem 1.5rem 5rem;
-        gap: 2rem;
-    }
-
-    .categorySection {
-        flex-shrink: 0;
-        width: 160px;
-        margin-bottom: 0;
-    }
-
-    .categorySectionCards {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
     }
 
     #modalOverlay {
@@ -797,15 +736,20 @@ a span:hover {
     body {
         position: fixed;
         overflow: hidden;
-        width: 100vh;
+        width: 100dvh;
         height: 100vw;
-        left: calc(50vw - 50vh);
-        top: calc(50vh - 50vw);
+        left: calc(50vw - 50dvh);
+        top: calc(50dvh - 50vw);
         transform: rotate(-90deg);
     }
 
     main {
-        width: 100vh !important;
+        width: 100dvh !important;
         height: 100vw !important;
+    }
+
+    #projectWorkspace.gridActive {
+        width: 90dvh;
+        max-width: none;
     }
 }

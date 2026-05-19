@@ -31,12 +31,14 @@ let bouncers = [];
 
 function startBounce() {
     stopBounce();
+    const bounceW = isMobile ? window.innerHeight : window.innerWidth;
+    const bounceH = isMobile ? window.innerWidth : window.innerHeight;
     bouncers = getAllCards().map(card => {
         const s = 0.6 + Math.random() * 0.6;
         return {
             el: card,
-            x: Math.random() * (window.innerWidth - 320 * s),
-            y: Math.random() * (window.innerHeight - 180 * s),
+            x: Math.random() * (bounceW - 320 * s),
+            y: Math.random() * (bounceH - 180 * s),
             vx: (0.2 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1),
             vy: (0.2 + Math.random() * 0.4) * (Math.random() < 0.5 ? 1 : -1),
             scale: s,
@@ -44,28 +46,22 @@ function startBounce() {
             scaleSpeed: 0.001 + Math.random() * 0.002
         };
     });
-    if (!isMobile) {
-        loop();
-        bouncers.forEach(b => {
-            b.el.style.position = 'absolute';
-            b.el.style.left = '0';
-            b.el.style.top = '0';
-            b.el.style.width = '320px';
-            b.el.classList.add('bouncing');
-        });
-    } else {
-        bouncers.forEach(b => b.el.classList.add('bouncing'));
-    }
+    loop();
+    bouncers.forEach(b => {
+        b.el.style.position = 'absolute';
+        b.el.style.left = '0';
+        b.el.style.top = '0';
+        b.el.style.width = '320px';
+        b.el.classList.add('bouncing');
+    });
 }
 
 function stopBounce() {
     bouncers.forEach(b => {
         b.el.classList.remove('bouncing');
-        if (!isMobile) {
-            b.el.style.left = b.x + 'px';
-            b.el.style.top = b.y + 'px';
-            b.el.style.transform = 'scale(1)';
-        }
+        b.el.style.left = b.x + 'px';
+        b.el.style.top = b.y + 'px';
+        b.el.style.transform = 'scale(1)';
     });
     bouncers = [];
     noLoop();
@@ -442,6 +438,8 @@ function draw() {
   circle(cursorX, cursorY, 10);
 
   if (!modal.classList.contains('active')) {
+    const bW = isMobile ? window.innerHeight : width;
+    const bH = isMobile ? window.innerWidth : height;
     bouncers.forEach(b => {
       b.x += b.vx;
       b.y += b.vy;
@@ -449,10 +447,10 @@ function draw() {
       const cardW = 320 * b.scale;
       const cardH = 180 * b.scale;
 
-      if (b.x < 0)            { b.x = 0;              b.vx =  Math.abs(b.vx); }
-      if (b.y < 0)            { b.y = 0;              b.vy =  Math.abs(b.vy); }
-      if (b.x + cardW > width) { b.x = width - cardW;  b.vx = -Math.abs(b.vx); }
-      if (b.y + cardH > height){ b.y = height - cardH; b.vy = -Math.abs(b.vy); }
+      if (b.x < 0)             { b.x = 0;             b.vx =  Math.abs(b.vx); }
+      if (b.y < 0)             { b.y = 0;             b.vy =  Math.abs(b.vy); }
+      if (b.x + cardW > bW)    { b.x = bW - cardW;    b.vx = -Math.abs(b.vx); }
+      if (b.y + cardH > bH)    { b.y = bH - cardH;    b.vy = -Math.abs(b.vy); }
 
       b.scale += b.scaleDir * b.scaleSpeed;
       if (b.scale > 1.4 || b.scale < 0.4) b.scaleDir *= -1;
