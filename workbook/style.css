@@ -605,6 +605,23 @@ a span:hover {
     font-weight: 700;
 }
 
+.workbookMasterTitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: #e0e0e0;
+    width: 100%;
+    padding: 3rem 0 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 2.5rem;
+}
+
+.workbookMasterTitle:first-child {
+    padding-top: 0;
+}
+
 .categorySection {
     margin-bottom: 3rem;
 }

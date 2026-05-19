@@ -133,7 +133,16 @@ function buildCategorySections() {
         if (!groups.has(cat)) { groups.set(cat, []); categoryOrder.push(cat); }
         groups.get(cat).push(card);
     });
+    let currentWorkbook = null;
     categoryOrder.forEach(cat => {
+        const wb = cat.startsWith('Workbook A') ? 'A' : cat.startsWith('Workbook B') ? 'B' : null;
+        if (wb && wb !== currentWorkbook) {
+            currentWorkbook = wb;
+            const masterTitle = document.createElement('div');
+            masterTitle.className = 'workbookMasterTitle';
+            masterTitle.textContent = `Workbook ${wb}`;
+            workspace.appendChild(masterTitle);
+        }
         const section = document.createElement('div');
         section.className = 'categorySection';
         const title = document.createElement('div');
@@ -153,6 +162,7 @@ function removeCategorySections() {
         section.querySelectorAll('.projectCard').forEach(card => workspace.appendChild(card));
         section.remove();
     });
+    workspace.querySelectorAll('.workbookMasterTitle').forEach(el => el.remove());
     document.getElementById('canvas').classList.remove('gridScroll');
 }
 
