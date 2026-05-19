@@ -643,6 +643,7 @@ a span:hover {
 
     .controlsFooter {
         padding: 1rem 1.25rem;
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
     }
 
     .seqControls {
@@ -660,6 +661,7 @@ a span:hover {
 
     main {
         overflow: visible !important;
+        height: 100dvh;
     }
 
     #canvas {
