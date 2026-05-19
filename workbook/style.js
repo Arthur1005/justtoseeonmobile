@@ -169,7 +169,7 @@ function openModal(card) {
     const galleryEls = Array.from(card.querySelectorAll('.cardGallery img, .cardGallery video'));
     const slides = galleryEls.length > 0
         ? galleryEls.map(el => el.tagName === 'VIDEO'
-            ? `<div class="modalImageSlide"><video class="modalImage" src="${el.src}" autoplay loop ${card.dataset.sound ? '' : 'muted'}></video></div>`
+            ? `<div class="modalImageSlide"><video class="modalImage" src="${el.src}" autoplay loop playsinline ${card.dataset.sound ? '' : 'muted'}></video></div>`
             : `<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${el.src}"/></div>`)
         : [`<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${card.dataset.img}"/></div>`];
     modalGallery.innerHTML = slides.join('');
@@ -184,6 +184,7 @@ function openModal(card) {
         modalGallery.querySelectorAll('.modalImageSlide').forEach(slide => {
             slide.style.height = paneHeight + 'px';
         });
+        modalGallery.querySelectorAll('video').forEach(v => v.play().catch(() => {}));
     });
 }
 
