@@ -373,16 +373,6 @@ window.addEventListener('load', () => {
         card.addEventListener('mouseenter', () => { hoveredCardTitle = card.dataset.title ?? ''; });
         card.addEventListener('mouseleave', () => { hoveredCardTitle = ''; });
 
-        const subCat = extractSubCategory(card.dataset.category || '');
-        if (categoryIcons[subCat]) {
-            const badge = document.createElement('div');
-            badge.className = 'cardCatBadge';
-            const icon = document.createElement('span');
-            icon.className = 'material-symbols-outlined';
-            icon.textContent = categoryIcons[subCat];
-            badge.appendChild(icon);
-            card.appendChild(badge);
-        }
     });
 
     document.querySelectorAll('.cardGallery').forEach(img => {
