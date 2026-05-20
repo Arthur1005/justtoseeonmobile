@@ -301,7 +301,7 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
 }
 
 .modalArchiveTag .material-symbols-outlined {
-    font-size: 2em;
+    font-size: 1.5rem;
     letter-spacing: 0;
     text-transform: none;
 }
@@ -655,7 +655,7 @@ a span:hover {
 }
 
 .modalArchiveTag .material-symbols-outlined {
-    font-size: 2em;
+    font-size: 1.5rem;
     letter-spacing: 0;
     text-transform: none;
 }
