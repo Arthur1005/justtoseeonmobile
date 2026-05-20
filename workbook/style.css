@@ -96,16 +96,16 @@ main {
         filter 0.8s ease;
 }
 
-.cat-practice  { border-left: 4px solid #2ff801; }
-.cat-concept   { border-left: 4px solid #00d4ff; }
-.cat-process   { border-left: 4px solid #ff6b35; }
-.cat-tool      { border-left: 4px solid #b44fff; }
-.cat-casestudy { border-left: 4px solid #ffcc00; }
-.cat-arduino   { border-left: 4px solid #ff3366; }
-.cat-p5        { border-left: 4px solid #00ff9f; }
-.cat-activity  { border-left: 4px solid #ff9500; }
-.cat-gethelp   { border-left: 4px solid #4fc3f7; }
-.cat-final     { border-left: 4px solid #e040fb; }
+.cat-practice  { border-bottom: 4px solid rgba(47, 248, 1, 0.5); }
+.cat-concept   { border-bottom: 4px solid rgba(0, 212, 255, 0.5); }
+.cat-process   { border-bottom: 4px solid rgba(255, 107, 53, 0.5); }
+.cat-tool      { border-bottom: 4px solid rgba(180, 79, 255, 0.5); }
+.cat-casestudy { border-bottom: 4px solid rgba(255, 204, 0, 0.5); }
+.cat-arduino   { border-bottom: 4px solid rgba(255, 51, 102, 0.5); }
+.cat-p5        { border-bottom: 4px solid rgba(0, 255, 159, 0.5); }
+.cat-activity  { border-bottom: 4px solid rgba(255, 149, 0, 0.5); }
+.cat-gethelp   { border-bottom: 4px solid rgba(79, 195, 247, 0.5); }
+.cat-final     { border-bottom: 4px solid rgba(224, 64, 251, 0.5); }
 
 .projectCard.bouncing {
     transition: none !important;
