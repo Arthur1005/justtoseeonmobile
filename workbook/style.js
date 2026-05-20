@@ -11,7 +11,6 @@ const btnGrid = document.getElementById('btnGrid');
 const btnChaos = document.getElementById('btnChaos');
 const btn2A = document.getElementById('btn2a');
 const btn2B = document.getElementById('btn2b');
-
 const isMobile = window.innerWidth < window.innerHeight;
 
 let step = 0;
@@ -31,8 +30,12 @@ let bouncers = [];
 
 function startBounce() {
     stopBounce();
-    const bounceW = isMobile ? window.innerHeight : window.innerWidth;
-    const bounceH = isMobile ? window.innerWidth : window.innerHeight;
+    let bounceW = window.innerWidth;
+    let bounceH = window.innerHeight;
+    if (isMobile) {
+        bounceW = window.innerHeight;
+        bounceH = window.innerWidth;
+    }
     bouncers = getAllCards().map(card => {
         const s = 0.6 + Math.random() * 0.6;
         return {
@@ -177,25 +180,42 @@ function applyGridLayout() {
 
 function openModal(card) {
     const galleryEls = Array.from(card.querySelectorAll('.cardGallery img, .cardGallery video'));
-    const slides = galleryEls.length > 0
-        ? galleryEls.map(el => el.tagName === 'VIDEO'
-            ? `<div class="modalImageSlide"><video class="modalImage" src="${el.src}" autoplay loop playsinline ${card.dataset.sound ? '' : 'muted'}></video></div>`
-            : `<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${el.src}"/></div>`)
-        : [`<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${card.dataset.img}"/></div>`];
+    let slides = [];
+    if (galleryEls.length > 0) {
+        galleryEls.forEach(function(el) {
+            if (el.tagName === 'VIDEO') {
+                slides.push(`<div class="modalImageSlide"><video class="modalImage" src="${el.src}" autoplay loop playsinline ${card.dataset.sound ? '' : 'muted'}></video></div>`);
+            } else {
+                slides.push(`<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${el.src}"/></div>`);
+            }
+        });
+    } else {
+        slides.push(`<div class="modalImageSlide"><img class="modalImage" alt="Detail" src="${card.dataset.img}"/></div>`);
+    }
     modalGallery.innerHTML = slides.join('');
     modalTitle.innerText = card.dataset.title;
-    modalCategory.innerText = card.dataset.category ?? `Workbook ${card.classList.contains('dataCat2a') ? 'A' : 'B'}`;
+    if (card.dataset.category) {
+        modalCategory.innerText = card.dataset.category;
+    } else if (card.classList.contains('dataCat2a')) {
+        modalCategory.innerText = 'Workbook A';
+    } else {
+        modalCategory.innerText = 'Workbook B';
+    }
     const descEl = card.querySelector('.cardDescription');
     modalDescription.innerHTML = descEl ? descEl.innerHTML : '';
     modal.classList.add('active');
 
-    requestAnimationFrame(() => {
+    setTimeout(function() {
         const paneHeight = document.querySelector('.modalMediaPane').clientHeight;
-        modalGallery.querySelectorAll('.modalImageSlide').forEach(slide => {
+        modalGallery.querySelectorAll('.modalImageSlide').forEach(function(slide) {
             slide.style.height = paneHeight + 'px';
         });
-        modalGallery.querySelectorAll('video').forEach(v => v.play().catch(() => {}));
-    });
+        modalGallery.querySelectorAll('video').forEach(function(v) {
+            v.play().catch(function() {
+                // autoplay blocked, that's ok
+            });
+        });
+    }, 0);
 }
 
 // Click to Enlarge
@@ -449,8 +469,12 @@ function draw() {
   circle(cursorX, cursorY, 10);
 
   if (!modal.classList.contains('active')) {
-    const bW = isMobile ? window.innerHeight : width;
-    const bH = isMobile ? window.innerWidth : height;
+    let bW = width;
+    let bH = height;
+    if (isMobile) {
+        bW = window.innerHeight;
+        bH = window.innerWidth;
+    }
     bouncers.forEach(b => {
       b.x += b.vx;
       b.y += b.vy;
