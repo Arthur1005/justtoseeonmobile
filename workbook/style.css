@@ -96,6 +96,17 @@ main {
         filter 0.8s ease;
 }
 
+.cat-practice  { border-left: 4px solid #2ff801; }
+.cat-concept   { border-left: 4px solid #00d4ff; }
+.cat-process   { border-left: 4px solid #ff6b35; }
+.cat-tool      { border-left: 4px solid #b44fff; }
+.cat-casestudy { border-left: 4px solid #ffcc00; }
+.cat-arduino   { border-left: 4px solid #ff3366; }
+.cat-p5        { border-left: 4px solid #00ff9f; }
+.cat-activity  { border-left: 4px solid #ff9500; }
+.cat-gethelp   { border-left: 4px solid #4fc3f7; }
+.cat-final     { border-left: 4px solid #e040fb; }
+
 .projectCard.bouncing {
     transition: none !important;
     transform-origin: top left;
