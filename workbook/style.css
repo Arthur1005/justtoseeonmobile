@@ -96,26 +96,13 @@ main {
         filter 0.8s ease;
 }
 
-.projectCard:active {
-    cursor: grabbing;
-}
-
-.projectCard.dragging {
-    cursor: grabbing !important;
-    opacity: 0.9 !important;
-    z-index: 1000 !important;
-    pointer-events: none;
-    transition: none !important;
-    scale: 1.05;
-}
-
 .projectCard.bouncing {
     transition: none !important;
     transform-origin: top left;
     will-change: transform;
 }
 
-.projectCard:not(.dragging):hover {
+.projectCard:hover {
     z-index: 100 !important;
 }
 
@@ -165,13 +152,7 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
 }
 
 
-.dropPlaceholder {
-    aspect-ratio: 16 / 9;
-    background: rgba(47, 248, 1, 0.05);
-    border: 1px dashed rgba(47, 248, 1, 0.3);
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
+
 
 #modalOverlay {
     position: fixed;

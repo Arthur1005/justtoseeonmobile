@@ -14,9 +14,6 @@ const btn2B = document.getElementById('btn2b');
 const isMobile = window.innerWidth < window.innerHeight;
 
 let step = 0;
-let placeholder = document.createElement('div');
-placeholder.className = 'dropPlaceholder';
-
 
 let cursorX = 0;
 let cursorY = 0;
@@ -28,6 +25,7 @@ function getAllCards() {
 
 let bouncers = [];
 
+// bouncing function – Claude provides the math
 function startBounce() {
     stopBounce();
     let bounceW = window.innerWidth;
@@ -70,7 +68,7 @@ function stopBounce() {
     noLoop();
 }
 
-// Category Filtering – getVisibleCards for Workbook B
+// Filter Categories – getVisibleCards for Workbook B
 function getVisibleCards() {
     const isAActive = btn2A.classList.contains('catBtnActiveGreen');
     const isBActive = btn2B.classList.contains('catBtnActiveGreen');
@@ -82,7 +80,7 @@ function getVisibleCards() {
 }
 
 
-// Random Layout – Bounce Animation for Workbook B
+// Initiating Bouncing
 function randomizeLayout() {
     step = 0;
     removeCategorySections();
@@ -92,6 +90,7 @@ function randomizeLayout() {
     btnGrid.className = "controlBtn btnDisabled";
 }
 
+// Resize
 function handleResize() {
     if (step === 1) { randomizeLayout(); return; }
     if (step !== 0) return;
@@ -101,6 +100,7 @@ function handleResize() {
     btnGrid.className = "controlBtn btnActiveGlow";
 }
 
+// Grid
 function handleGrid() {
     if (step === 2) {
         removeCategorySections();
@@ -119,6 +119,7 @@ function handleGrid() {
     btnGrid.className = "controlBtn btnGridDone";
 }
 
+// Label slice
 function extractSubCategory(cat) {
     const dashIdx = cat.lastIndexOf('–');
     if (dashIdx >= 0) return cat.slice(dashIdx + 1).trim();
@@ -127,6 +128,7 @@ function extractSubCategory(cat) {
     return cat;
 }
 
+// Grid Layout
 function buildCategorySections() {
     const visibleCards = getVisibleCards();
     const groups = new Map();
@@ -169,7 +171,7 @@ function removeCategorySections() {
     document.getElementById('canvas').classList.remove('gridScroll');
 }
 
-// Grid Layout – Category Rows with Scrollable Canvas
+
 function applyGridLayout() {
     removeCategorySections();
     workspace.classList.add('gridActive');
@@ -177,7 +179,7 @@ function applyGridLayout() {
     buildCategorySections();
 }
 
-
+// Card open
 function openModal(card) {
     const galleryEls = Array.from(card.querySelectorAll('.cardGallery img, .cardGallery video'));
     let slides = [];
@@ -218,7 +220,7 @@ function openModal(card) {
     }, 0);
 }
 
-// Click to Enlarge
+// Click to Enlarge img
 function closeModal() {
     document.querySelector('.modalMediaPane').classList.remove('galleryFullscreen');
     modal.classList.remove('active');
@@ -261,106 +263,20 @@ modalGallery.addEventListener('click', (e) => {
 });
 
 
-let draggedElement = null;
-let startX = 0;
-let startY = 0;
-let isDragging = false;
-let offset = { x: 0, y: 0 };
-const THRESHOLD = 8;
+document.addEventListener('mousemove', function(e) {
+    cursorX = e.clientX;
+    cursorY = e.clientY;
+    if (bouncers.length === 0) redraw();
+});
 
-workspace.addEventListener('mousedown', (e) => {
-    // Category Filtering – Block Drag on Inactive Cards for Workbook B
+workspace.addEventListener('click', function(e) {
     const card = e.target.closest('.projectCard');
     if (!card) return;
     const isAActive = btn2A.classList.contains('catBtnActiveGreen');
     const isBActive = btn2B.classList.contains('catBtnActiveGreen');
     if (isAActive && card.classList.contains('dataCat2b')) return;
     if (isBActive && card.classList.contains('dataCat2a')) return;
-
-    draggedElement = card;
-    startX = e.clientX;
-    startY = e.clientY;
-
-    const rect = card.getBoundingClientRect();
-    offset.x = e.clientX - rect.left;
-    offset.y = e.clientY - rect.top;
-});
-
-document.addEventListener('mousemove', (e) => {
-    cursorX = e.clientX;
-    cursorY = e.clientY;
-
-    if (bouncers.length === 0) redraw();
-
-    if (!draggedElement) return;
-    if (bouncers.length > 0) return;
-
-    const dist = Math.sqrt(Math.pow(e.clientX - startX, 2) + Math.pow(e.clientY - startY, 2));
-
-    if (!isDragging && dist > THRESHOLD) {
-        isDragging = true;
-        draggedElement.classList.add('dragging');
-
-        if (step === 2) {
-            draggedElement.after(placeholder);
-            draggedElement.style.position = 'fixed';
-            draggedElement.style.width = `${placeholder.offsetWidth}px`;
-            draggedElement.style.height = `${placeholder.offsetHeight}px`;
-            draggedElement.style.zIndex = "1000";
-        }
-    }
-
-    if (isDragging) {
-        if (step < 2) {
-            const wsRect = workspace.getBoundingClientRect();
-            const leftPercent = ((e.clientX - offset.x - wsRect.left) / wsRect.width) * 100;
-            const topPercent = ((e.clientY - offset.y - wsRect.top) / wsRect.height) * 100;
-            draggedElement.style.left = `${leftPercent}%`;
-            draggedElement.style.top = `${topPercent}%`;
-        } else {
-            draggedElement.style.left = `${e.clientX - offset.x}px`;
-            draggedElement.style.top = `${e.clientY - offset.y}px`;
-
-            const visibleCards = getVisibleCards();
-            let hoveredCard = null;
-
-            for (let card of visibleCards) {
-                if (card === draggedElement) continue;
-                const rect = card.getBoundingClientRect();
-                if (e.clientX > rect.left && e.clientX < rect.right && e.clientY > rect.top && e.clientY < rect.bottom) {
-                    hoveredCard = card;
-                    break;
-                }
-            }
-
-            if (hoveredCard) {
-                const rect = hoveredCard.getBoundingClientRect();
-                const isAfter = (e.clientX > rect.left + rect.width / 2);
-                if (isAfter) {
-                    hoveredCard.after(placeholder);
-                } else {
-                    hoveredCard.before(placeholder);
-                }
-            }
-        }
-    }
-});
-
-document.addEventListener('mouseup', () => {
-    if (!draggedElement) return;
-
-    if (!isDragging) {
-        openModal(draggedElement);
-    } else {
-        if (step === 2) {
-            placeholder.replaceWith(draggedElement);
-        }
-    }
-
-    draggedElement.classList.remove('dragging');
-    draggedElement = null;
-    isDragging = false;
-    if (placeholder.parentNode) placeholder.remove();
+    openModal(card);
 });
 
 
