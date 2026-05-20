@@ -9,10 +9,6 @@
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
-.invisible { visibility: hidden; }
-.opacity-0  { opacity: 0; }
-.opacity-100 { opacity: 1; }
-
 
 *, *::before, *::after {
     box-sizing: border-box;
@@ -42,10 +38,6 @@ main {
     width: 100vw;
     position: relative;
     overflow: hidden;
-}
-
-a {
-    color: white;
 }
 
 #canvas {
@@ -470,9 +462,6 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
     pointer-events: none;
 }
 
-.controlsSpacer {
-    flex: 1;
-}
 
 
 .categoryControls {
