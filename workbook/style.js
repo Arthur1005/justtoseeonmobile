@@ -169,6 +169,7 @@ function buildCategorySections() {
         if (categoryIcons[subCat]) {
             const icon = document.createElement('span');
             icon.className = 'material-symbols-outlined catTitleIcon';
+            if (categoryIcons[subCat] === 'javascript') icon.classList.add('iconScaleUp');
             icon.textContent = categoryIcons[subCat];
             title.appendChild(icon);
         }
@@ -226,6 +227,7 @@ function openModal(card) {
     if (categoryIcons[subCat]) {
         const icon = document.createElement('span');
         icon.className = 'material-symbols-outlined';
+        if (categoryIcons[subCat] === 'javascript') icon.classList.add('iconScaleUp');
         icon.textContent = categoryIcons[subCat];
         modalCategory.appendChild(icon);
     }

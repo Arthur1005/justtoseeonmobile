@@ -623,7 +623,7 @@ a span:hover {
 }
 
 .catTitleIcon {
-    font-size: 2rem;
+    font-size: 1.5rem;
     letter-spacing: 0;
     text-transform: none;
 }
@@ -648,8 +648,12 @@ a span:hover {
     display: none;
 }
 
+.iconScaleUp {
+    transform: scale(1.25);
+}
+
 .modalArchiveTag .material-symbols-outlined {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     letter-spacing: 0;
     text-transform: none;
 }
