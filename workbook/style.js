@@ -16,7 +16,7 @@ const isMobile = window.innerWidth < window.innerHeight;
 let step = 0;
 
 const categoryIcons = {
-    'In-class Activity': 'assignment',
+    'Activity':          'assignment',
     'Concept':           'lightbulb',
     'Process':           'arrow_split',
     'Tool':              'build_circle',
