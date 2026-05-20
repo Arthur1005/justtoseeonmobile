@@ -16,16 +16,15 @@ const isMobile = window.innerWidth < window.innerHeight;
 let step = 0;
 
 const categoryIcons = {
-    'Practice':      'gesture',
-    'Concept':       'lightbulb',
-    'Process':       'settings',
-    'Tool':          'handyman',
-    'Case Study':    'search',
-    'Arduino':       'memory',
-    'p5 Experiment': 'code',
-    'Activity':      'sports_esports',
-    'Get Help':      'forum',
-    'Final Project': 'emoji_events'
+    'In-class Activity': 'assignment',
+    'Concept':           'lightbulb',
+    'Process':           'arrow_split',
+    'Tool':              'build_circle',
+    'Case Study':        'search',
+    'Arduino':           'memory_alt',
+    'p5 Experiment':     'javascript',
+    'Get Help':          'e911_emergency',
+    'Final Project':     'emoji_events'
 };
 
 let cursorX = 0;
