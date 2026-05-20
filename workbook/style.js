@@ -15,6 +15,19 @@ const isMobile = window.innerWidth < window.innerHeight;
 
 let step = 0;
 
+const categoryIcons = {
+    'Practice':      'gesture',
+    'Concept':       'lightbulb',
+    'Process':       'settings',
+    'Tool':          'handyman',
+    'Case Study':    'search',
+    'Arduino':       'memory',
+    'p5 Experiment': 'code',
+    'Activity':      'sports_esports',
+    'Get Help':      'forum',
+    'Final Project': 'emoji_events'
+};
+
 let cursorX = 0;
 let cursorY = 0;
 
@@ -152,7 +165,14 @@ function buildCategorySections() {
         section.className = 'categorySection';
         const title = document.createElement('div');
         title.className = 'categorySectionTitle';
-        title.textContent = extractSubCategory(cat);
+        const subCat = extractSubCategory(cat);
+        title.textContent = subCat;
+        if (categoryIcons[subCat]) {
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined catTitleIcon';
+            icon.textContent = categoryIcons[subCat];
+            title.appendChild(icon);
+        }
         section.appendChild(title);
         const cardsContainer = document.createElement('div');
         cardsContainer.className = 'categorySectionCards';
@@ -202,6 +222,13 @@ function openModal(card) {
         modalCategory.innerText = 'Workbook A';
     } else {
         modalCategory.innerText = 'Workbook B';
+    }
+    const subCat = extractSubCategory(card.dataset.category || '');
+    if (categoryIcons[subCat]) {
+        const icon = document.createElement('span');
+        icon.className = 'material-symbols-outlined';
+        icon.textContent = categoryIcons[subCat];
+        modalCategory.appendChild(icon);
     }
     const descEl = card.querySelector('.cardDescription');
     modalDescription.innerHTML = descEl ? descEl.innerHTML : '';
@@ -280,7 +307,7 @@ workspace.addEventListener('click', function(e) {
 });
 
 
-// Category Filtering – Button Toggle
+// Category Button
 function openCategory(event) {
     const btn = event.currentTarget;
     const wasActive = btn.classList.contains('catBtnActiveGreen');
@@ -345,6 +372,17 @@ window.addEventListener('load', () => {
     getAllCards().forEach(card => {
         card.addEventListener('mouseenter', () => { hoveredCardTitle = card.dataset.title ?? ''; });
         card.addEventListener('mouseleave', () => { hoveredCardTitle = ''; });
+
+        const subCat = extractSubCategory(card.dataset.category || '');
+        if (categoryIcons[subCat]) {
+            const badge = document.createElement('div');
+            badge.className = 'cardCatBadge';
+            const icon = document.createElement('span');
+            icon.className = 'material-symbols-outlined';
+            icon.textContent = categoryIcons[subCat];
+            badge.appendChild(icon);
+            card.appendChild(badge);
+        }
     });
 
     document.querySelectorAll('.cardGallery').forEach(img => {
@@ -483,7 +521,7 @@ function clickEnlarge() {
     text('Click to Enlarge', cursorX, cursorY);
 }
 
-// Scroll Down Cursor – Label Update for Workbook B
+// Scroll Down Cursor
 function scrollDown() {
     textSize(16);
     rectMode(CENTER);
@@ -498,13 +536,9 @@ function scrollDown() {
 }
 
 
-
-
 // Declaration
 
 // I acknowledge the use of Stitch to draft my website's initial layout, and I build beyond that; 12 hours image is made on the purpose of experimentation with Stitch.
 // I acknowledge the use of Claude to fetch code from my other project; answer questions when I asked; indentify bug in code; change large amount of code at once (e.g. path of images).
 // I acknowledge the use of Claude to assit my coding progress for JS, especially with mobile responsive rotation and boundcing effect.
 // A full record of prompts and outputs is available upon request.
-
-

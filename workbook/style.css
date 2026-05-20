@@ -295,6 +295,15 @@ body:has(#btn2b.catBtnActiveGreen) #projectWorkspace.gridActive .dataCat2a {
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 0.3em;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.modalArchiveTag .material-symbols-outlined {
+    font-size: 1em;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 
@@ -618,6 +627,35 @@ a span:hover {
     margin-bottom: 1.25rem;
     padding-bottom: 0.6rem;
     border-bottom: 1px solid rgba(47, 248, 1, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.catTitleIcon {
+    font-size: 1rem;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.cardCatBadge {
+    position: absolute;
+    bottom: 0.4rem;
+    right: 0.4rem;
+    z-index: 20;
+    color: #2ff801;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.cardCatBadge .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.modalArchiveTag .material-symbols-outlined {
+    font-size: 1em;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .categorySectionCards {
