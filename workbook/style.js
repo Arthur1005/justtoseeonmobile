@@ -133,15 +133,15 @@ function buildCategorySections() {
         if (!groups.has(cat)) { groups.set(cat, []); categoryOrder.push(cat); }
         groups.get(cat).push(card);
     });
-    let currentWorkbook = null;
+    let lastWorkbook = '';
     categoryOrder.forEach(cat => {
-        const wb = cat.startsWith('Workbook A') ? 'A' : cat.startsWith('Workbook B') ? 'B' : null;
-        if (wb && wb !== currentWorkbook) {
-            currentWorkbook = wb;
-            const masterTitle = document.createElement('div');
-            masterTitle.className = 'workbookMasterTitle';
-            masterTitle.textContent = `Workbook ${wb}`;
-            workspace.appendChild(masterTitle);
+        if (cat.includes('Workbook A') && lastWorkbook !== 'A') {
+            lastWorkbook = 'A';
+            workspace.appendChild(document.getElementById('masterTitleA'));
+        }
+        if (cat.includes('Workbook B') && lastWorkbook !== 'B') {
+            lastWorkbook = 'B';
+            workspace.appendChild(document.getElementById('masterTitleB'));
         }
         const section = document.createElement('div');
         section.className = 'categorySection';
@@ -162,7 +162,7 @@ function removeCategorySections() {
         section.querySelectorAll('.projectCard').forEach(card => workspace.appendChild(card));
         section.remove();
     });
-    workspace.querySelectorAll('.workbookMasterTitle').forEach(el => el.remove());
+
     document.getElementById('canvas').classList.remove('gridScroll');
 }
 
@@ -198,7 +198,7 @@ function openModal(card) {
     });
 }
 
-// Click to Enlarge – Fullscreen Cleanup on Close for Workbook B
+// Click to Enlarge
 function closeModal() {
     document.querySelector('.modalMediaPane').classList.remove('galleryFullscreen');
     modal.classList.remove('active');
@@ -222,7 +222,7 @@ document.querySelector('.modalContainer').addEventListener('click', (e) => {
     }
 });
 
-// Scroll Down Cursor – Single Image Exclusion for Workbook B
+// Scroll Down Cursor
 modalGallery.addEventListener('mouseenter', () => {
     const count = modalGallery.querySelectorAll('.modalImageSlide').length;
     if (count > 1) isOverImg = true;
@@ -344,7 +344,7 @@ document.addEventListener('mouseup', () => {
 });
 
 
-// Category Filtering – Button Toggle, CSS :has() Does the Rest for Workbook B
+// Category Filtering – Button Toggle
 function openCategory(event) {
     const btn = event.currentTarget;
     const wasActive = btn.classList.contains('catBtnActiveGreen');
@@ -564,7 +564,7 @@ function scrollDown() {
 
 // I acknowledge the use of Stitch to draft my website's initial layout, and I build beyond that; 12 hours image is made on the purpose of experimentation with Stitch.
 // I acknowledge the use of Claude to fetch code from my other project; answer questions when I asked; indentify bug in code; change large amount of code at once (e.g. path of images).
-// I prompted the model to ask me clarifying questions about my draft and the flow of my logic. I used the output to refine my central thesis statement and to decide how to order the argument for my essay.
+// I acknowledge the use of Claude to assit my coding progress for JS, especially with mobile responsive rotation and boundcing effect.
 // A full record of prompts and outputs is available upon request.
 
 

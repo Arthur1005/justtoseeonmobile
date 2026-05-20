@@ -606,6 +606,7 @@ a span:hover {
 }
 
 .workbookMasterTitle {
+    display: none;
     font-family: 'Terminal';
     font-size: 0.8rem;
     font-weight: bold;
@@ -618,8 +619,8 @@ a span:hover {
     margin-bottom: 2.5rem;
 }
 
-.workbookMasterTitle:first-child {
-    padding-top: 0;
+#projectWorkspace.gridActive .workbookMasterTitle {
+    display: block;
 }
 
 .categorySection {
@@ -746,7 +747,7 @@ a span:hover {
     }
 }
 
-/* ── Force landscape in portrait ── */
+
 @media (pointer: coarse) and (max-width: 768px) and (orientation: portrait) {
     body {
         position: fixed;
