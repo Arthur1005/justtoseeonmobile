@@ -100,6 +100,7 @@ function randomizeLayout() {
     startBounce();
     btnResize.className = "controlBtn btnActiveGlow";
     btnGrid.className = "controlBtn btnDisabled";
+    btnChaos.className = "controlBtn btnDisabled";
 }
 
 // Resize
@@ -110,6 +111,7 @@ function handleResize() {
     bouncers.forEach(b => { b.scale = 1; b.scaleSpeed = 0; });
     btnResize.className = "controlBtn btnMuted";
     btnGrid.className = "controlBtn btnActiveGlow";
+    btnChaos.className = "controlBtn btnMuted";
 }
 
 // Grid
@@ -341,14 +343,8 @@ document.getElementById('modalBackBtn').addEventListener('click', closeModal);
 btnResize.addEventListener('click', handleResize);
 btnGrid.addEventListener('click', handleGrid);
 btnChaos.addEventListener('click', () => {
-    if (bouncers.length > 0) {
-        stopBounce();
-        step = 1;
-        btnResize.className = "controlBtn btnMuted";
-        btnGrid.className = "controlBtn btnActiveGlow";
-    } else {
-        randomizeLayout();
-    }
+    if (bouncers.length > 0) return;
+    randomizeLayout();
 });
 
 let isOverImg = false;
